@@ -7,7 +7,6 @@ verify_ssl = true
 
 [packages]
 kivy = "*"
-autoclass = "*"
 jnius = "*"
 
 [requires]
