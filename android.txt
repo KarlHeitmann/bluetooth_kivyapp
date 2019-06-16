@@ -1,0 +1,3 @@
+title=kivyExample
+author=kheitmann
+orientation=portrait
