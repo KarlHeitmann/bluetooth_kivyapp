@@ -25,8 +25,12 @@ UUID = autoclass('java.util.UUID')
 
 def get_socket_stream(name):
     paired_devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray()
+    print("========================")
+    print([ x.getName() for x in paired_devices ])
+    print(paired_devices)
     socket = None
     for device in paired_devices:
+        print(device.getName())
         if device.getName() == name:
             socket = device.createRfcommSocketToServiceRecord(
                 UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
@@ -68,7 +72,8 @@ BoxLayout:
 
     class Bluetooth(App):
         def build(self):
-            self.recv_stream, self.send_stream = get_socket_stream('linvor')
+            #self.recv_stream, self.send_stream = get_socket_stream('linvor')
+            self.recv_stream, self.send_stream = get_socket_stream('ESP32test')
             return Builder.load_string(kv)
 
         def send(self, cmd):
