@@ -78,7 +78,10 @@ BoxLayout:
 
         def send(self, cmd):
             #self.send_stream.write('{}\n'.format(cmd))
-            self.send_stream.write('{"datum":{"potencia":99.9}')
+            #self.send_stream.write('{"datum":{"potencia":99.9}')
+            print(cmd)
+            print(self.send_stream)
+            self.send_stream.write(cmd.encode())
             self.send_stream.flush()
 
         def reset(self, btns):
