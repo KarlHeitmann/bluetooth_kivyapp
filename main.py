@@ -2,10 +2,127 @@ import kivy
 from kivy.app import App
 from kivy.uix.label import Label
 
+# Same as before, with a kivy-based UI
 
-class MyApp(App):
-    def build(self):
-        return Label(text="Hola Mundo Karl")
+'''
+Bluetooth/Pyjnius example
+=========================
+This was used to send some bytes to an arduino via bluetooth.
+The app must have BLUETOOTH and BLUETOOTH_ADMIN permissions (well, i didn't
+tested without BLUETOOTH_ADMIN, maybe it works.)
+Connect your device to your phone, via the bluetooth menu. After the
+pairing is done, you'll be able to use it in the app.
+'''
+
+from jnius import autoclass
+
+def acquire_permissions(permissions, timeout=30):
+    """
+    blocking function for acquiring storage permission
+
+    :param permissions: list of permission strings , e.g. ["android.permission.READ_EXTERNAL_STORAGE",]
+    :param timeout: timeout in seconds
+    :return: True if all permissions are granted
+    """
+
+    PythonActivity = jnius.autoclass('org.kivy.android.PythonActivity')
+    Compat = jnius.autoclass('android.support.v4.content.ContextCompat')
+    currentActivity = jnius.cast('android.app.Activity', PythonActivity.mActivity)
+
+    checkperm = functools.partial(Compat.checkSelfPermission, currentActivity)
+
+    def allgranted(permissions):
+        """
+        helper function checks permissions
+        :param permissions: list of permission strings
+        :return: True if all permissions are granted otherwise False
+        """
+        return reduce(lambda a, b: a and b,
+                    [True if p == 0 else False for p in map(checkperm, permissions)]
+                    )
+
+    haveperms = allgranted(permissions)
+    if haveperms:
+        # we have the permission and are ready
+        return True
+
+    # invoke the permissions dialog
+    currentActivity.requestPermissions(permissions, 0)
+
+    # now poll for the permission (UGLY but we cant use android Activity's onRequestPermissionsResult)
+    t0 = time.time()
+    while time.time() - t0 < timeout and not haveperms:
+        # in the poll loop we could add a short sleep for performance issues?
+        haveperms = allgranted(permissions)
+
+    return haveperms
+acquire_permissions("android.permission.BLUETOOTH")
+
+BluetoothAdapter = autoclass('android.bluetooth.BluetoothAdapter')
+BluetoothDevice = autoclass('android.bluetooth.BluetoothDevice')
+BluetoothSocket = autoclass('android.bluetooth.BluetoothSocket')
+UUID = autoclass('java.util.UUID')
+
+
+def get_socket_stream(name):
+    paired_devices = BluetoothAdapter.getDefaultAdapter().getBondedDevices().toArray()
+    socket = None
+    for device in paired_devices:
+        if device.getName() == name:
+            socket = device.createRfcommSocketToServiceRecord(
+                UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
+            recv_stream = socket.getInputStream()
+            send_stream = socket.getOutputStream()
+            break
+    socket.connect()
+    return recv_stream, send_stream
+
+if __name__ == '__main__':
+    kv = '''
+BoxLayout:
+    Button:
+        text: '0'
+        on_release: app.reset([b1, b2, b3, b4, b5])
+    ToggleButton:
+        id: b1
+        text: '1'
+        on_release: app.send(self.text)
+    ToggleButton:
+        id: b2
+        text: '2'
+        on_release: app.send(self.text)
+    ToggleButton:
+        id: b3
+        text: '3'
+        on_release: app.send(self.text)
+    ToggleButton:
+        id: b4
+        text: '4'
+        on_release: app.send(self.text)
+    ToggleButton:
+        id: b5
+        text: '5'
+        on_release: app.send(self.text)
+    '''
+    from kivy.lang import Builder
+    from kivy.app import App
+
+    class Bluetooth(App):
+        def build(self):
+            self.recv_stream, self.send_stream = get_socket_stream('linvor')
+            return Builder.load_string(kv)
+
+        def send(self, cmd):
+            self.send_stream.write('{}\n'.format(cmd))
+            self.send_stream.flush()
+
+        def reset(self, btns):
+            for btn in btns:
+                btn.state = 'normal'
+            self.send('0\n')
+
+    Bluetooth().run()
+
 
 if __name__ == "__main__":
     MyApp().run()
