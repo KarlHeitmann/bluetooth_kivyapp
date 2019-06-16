@@ -77,7 +77,8 @@ BoxLayout:
             return Builder.load_string(kv)
 
         def send(self, cmd):
-            self.send_stream.write('{}\n'.format(cmd))
+            #self.send_stream.write('{}\n'.format(cmd))
+            self.send_stream.write('{"datum":{"potencia":99.9}')
             self.send_stream.flush()
 
         def reset(self, btns):
