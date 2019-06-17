@@ -2,20 +2,20 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.properties import StringProperty
 
-#from btdriver import get_socket_stream, myThread
+from btdriver import get_socket_stream, myThread
 
 
 class Driver():
     def __init__(self, dsa):
         print(dsa)
-    def inicializar(self):
+    def inicializar(self, datalogger_main):
         print("inicializando")
-        #self.recv_stream, self.send_stream = get_socket_stream('ESP32test')
-        #self.input_thread = myThread(1, "Thread-1", 1, self.recv_stream)
-        #self.input_thread.start()
+        self.recv_stream, self.send_stream = get_socket_stream('ESP32test')
+        self.input_thread = myThread(datalogger_main, 1, "Thread-1", 1, self.recv_stream)
+        self.input_thread.start()
     def enviar(self):
         print("ENVIANDO...")
-        #self.send_stream.write("{\"datum\":{\"potencia\":99.9}}\n".encode())
+        self.send_stream.write("{\"datum\":{\"potencia\":99.9}}\n".encode())
     def attach(self, datalogger_main):
         self.datalogger_main = datalogger_main
         print("ATTACHED")
@@ -33,7 +33,6 @@ class DataloggerMain(Widget):
     random_number = StringProperty()
     conectar = False
     bt_driver = Driver("asddsa")
-    bt_driver.inicializar()
     def mensaje(self, evento):
         if self.conectar:
             self.random_number = "WENA"
@@ -42,7 +41,7 @@ class DataloggerMain(Widget):
             print("CLICK")
             print(evento)
         else:
-            self.bt_driver.attach(self)
+            self.bt_driver.inicializar(self)
             self.conectar = True
     #def on_touch_down(self, argumento):
     def init_msg(self):

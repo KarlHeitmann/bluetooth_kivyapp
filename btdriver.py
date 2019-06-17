@@ -27,9 +27,10 @@ def get_socket_stream(name):
 
 
 class myThread (threading.Thread):
-    def __init__(self, threadID, name, counter, inputStream):
+    def __init__(self, datalogger_main, threadID, name, counter, inputStream):
         threading.Thread.__init__(self)
         print("Iniciando thread")
+        self.datalogger_main = datalogger_main
         self.inputStream = inputStream
         self.threadID = threadID
         self.name = name
@@ -44,6 +45,7 @@ class myThread (threading.Thread):
                 mensaje = mensaje + input_chr
                 if (input_chr == '\n'):
                     print(mensaje)
+                    self.datalogger_main.hello_world(mensaje)
                     mensaje = ""
             '''
             data_in = self.inputStream.available()
