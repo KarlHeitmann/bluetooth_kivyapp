@@ -33,6 +33,7 @@ def get_socket_stream(name):
 class myThread (threading.Thread):
     def __init__(self, threadID, name, counter, inputStream):
         threading.Thread.__init__(self)
+        print("Iniciando thread")
         self.inputStream = inputStream
         self.threadID = threadID
         self.name = name
@@ -67,6 +68,7 @@ class Driver():
         print("inicializando")
         self.recv_stream, self.send_stream = get_socket_stream('ESP32test')
         self.input_thread = myThread(1, "Thread-1", 1, self.recv_stream)
+        self.input_thread.start()
     def enviar(self):
         print("ENVIANDO...")
         self.send_stream.write("{\"datum\":{\"potencia\":99.9}}\n".encode())
