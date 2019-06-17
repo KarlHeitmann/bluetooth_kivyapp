@@ -1,8 +1,12 @@
 from kivy.app import App
 from kivy.uix.widget import Widget
+from kivy.properties import StringProperty
 
 class DataloggerMain(Widget):
+    random_number = StringProperty()
+
     def mensaje(self, evento):
+        self.random_number = "WENA"
         print("CLICK")
         print(evento)
     #def on_touch_down(self, argumento):
