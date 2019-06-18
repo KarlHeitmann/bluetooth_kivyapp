@@ -1,12 +1,21 @@
 <DataloggerMain>:
-    BoxLayout:
-        Label:
-            id: label1
-            text: root.random_number
-        Button:
-            text: 'Middle'
-            id: middle_button
-            on_press: root.mensaje(args)
-        Button:
-            text: 'Right'
-            id: right_buttton
+    orientation: 'vertical'
+    Label:
+        text: 'this on top'
+    Label:
+        text: 'this right aligned'
+        size_hint_x: None
+        size: self.texture_size
+        pos_hint: {'right': 1}
+    Label:
+        text: 'this on bottom'
+    Label:
+        id: label1
+        text: root.random_number
+    Button:
+        text: 'Middle'
+        id: middle_button
+        on_press: root.mensaje(args)
+    Button:
+        text: 'Right'
+        id: right_buttton

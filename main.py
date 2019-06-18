@@ -1,7 +1,7 @@
 import os
 
 from kivy.app import App
-from kivy.uix.widget import Widget
+from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty
 
 
@@ -36,7 +36,7 @@ class Driver():
         print("ATTACHED")
         self.datalogger_main.callback_bluetooth_rx("!")
 
-class DataloggerMain(Widget):
+class DataloggerMain(BoxLayout):
     '''
     def __init__(self):
         self.random_number = StringProperty()
@@ -47,7 +47,8 @@ class DataloggerMain(Widget):
     '''
     random_number = StringProperty()
     conectar = False
-    #bt_driver = Driver("asddsa")
+    if BLUETOOTH_MODULE:
+        bt_driver = Driver("asddsa")
     def mensaje(self, evento):
         if self.conectar:
             self.random_number = "WENA"
