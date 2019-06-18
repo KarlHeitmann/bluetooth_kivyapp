@@ -4,10 +4,11 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import StringProperty
 
-
 import argparse
 
 BLUETOOTH_MODULE = True
+#BLUETOOTH_NAME = 'ESP32Playground'
+BLUETOOTH_NAME = 'ESP32test'
 
 if 'BLUETOOTH_OFF' in os.environ:
     BLUETOOTH_MODULE = False
@@ -24,7 +25,7 @@ class Driver():
     def inicializar(self, datalogger_main):
         print("inicializando")
         if BLUETOOTH_MODULE:
-            self.recv_stream, self.send_stream = get_socket_stream('ESP32test')
+            self.recv_stream, self.send_stream = get_socket_stream(BLUETOOTH_NAME)
             self.input_thread = myThread(datalogger_main, 1, "Thread-1", 1, self.recv_stream)
             self.input_thread.start()
     def enviar(self):
