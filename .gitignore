@@ -1,5 +1,7 @@
 *.sw?
 *\~
 
+bluetooth_off.sh
+
 .buildozer
 bin/

@@ -45,7 +45,7 @@ class myThread (threading.Thread):
                 mensaje = mensaje + input_chr
                 if (input_chr == '\n'):
                     print(mensaje)
-                    self.datalogger_main.hello_world(mensaje)
+                    self.datalogger_main.callback_bluetooth_rx(mensaje)
                     mensaje = ""
             '''
             data_in = self.inputStream.available()
